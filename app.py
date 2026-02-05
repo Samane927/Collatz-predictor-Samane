@@ -1,22 +1,24 @@
 import streamlit as st
 
-st.title("Saeidi's Predictor")
+# تنظیمات اصلی که باعث سنگینی سایت نمی‌شود
+st.set_page_config(page_title="Saeidi's Predictor", page_icon="🎯")
+st.title("Saeidi's Collapse Predictor")
 st.subheader("Inventor: Samaneh Saeidi")
 
-user_input = st.text_input("Enter number:", value="13")
+user_input = st.text_input("Enter a large number:", value="13")
 
-if st.button("Find Collapse Point"):
+if st.button("Analyze"):
     try:
         n = int(user_input)
         original_n = n
+        path = []
         step_count = 0
-        collapse_point = None
         
-        # محاسبه برای پیدا کردن اولین مضرب 16
+        # منطق اصلی تئوری سمانه: حرکت تا رسیدن به مضرب ۱۶
         current = n
         while current > 1:
-            if current % 16 == 0:
-                collapse_point = current
+            path.append(current)
+            if current % 16 == 0: # ایستگاه ۱۶
                 break
             
             step_count += 1
@@ -25,18 +27,15 @@ if st.button("Find Collapse Point"):
             else:
                 current = 3 * current + 1
         
-        # اگر عدد از اول مضرب 16 باشد یا در مسیر به آن برسد
-        if current % 16 == 0:
-            collapse_point = current
-
+        # نمایش خروجی دقیق و متنی (برای جلوگیری از OverflowError)
         st.divider()
-        
-        # نمایش دقیق دو موردی که خواستی
-        if collapse_point:
-            st.success(f"Collapse Value: {collapse_point}")
-            st.info(f"At Step: {step_count}")
-        else:
-            st.write("Reached 1 without hitting a specific 16-multiple.")
+        if path[-1] % 16 == 0:
+            st.error(f"🎯 **Collapse Point Reached:** {path[-1]}")
+            st.info(f"**Step Number:** {step_count}")
+            st.success(f"The number {str(original_n)[:10]}... is in total collapse.")
             
+        with st.expander("Show full path steps"):
+            st.write(path)
+
     except ValueError:
         st.error("Please enter a valid number.")
