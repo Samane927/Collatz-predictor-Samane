@@ -1,42 +1,43 @@
 import streamlit as st
 
-st.title("Saeidi's Predictor")
+st.title("Saeidi's Chain Analysis")
 st.subheader("Inventor: Samaneh Saeidi")
 
-user_input = st.text_input("Enter number:", value="13")
+user_input = st.text_input("Enter your large number:", value="1245876325458968742668878")
 
-if st.button("Find Collapse Point"):
+if st.button("Start Chain Analysis"):
     try:
-        n = int(user_input)
-        original_n = n
-        step_count = 0
-        collapse_point = None
-        
-        # محاسبه برای پیدا کردن اولین مضرب 16
+        n = int(user_input.replace(",", "").strip())
         current = n
+        
+        # مرحله اول: رسیدن به اولین عدد فرد
+        if current % 2 == 0:
+            st.write("### ⬇️ Step 1: Descending to the first Odd Number")
+            while current % 2 == 0:
+                current //= 2
+            st.warning(f"First Odd Number in Chain: {current}")
+        else:
+            st.info(f"Started with an Odd Number: {current}")
+
+        # مرحله دوم: تحلیل تئوری سمانه از عدد فرد تا مضرب 16
+        st.write("---")
+        st.write("### 🎯 Step 2: Finding Saeidi's 16-Station")
+        
+        steps = 0
+        first_odd = current
+        
         while current > 1:
             if current % 16 == 0:
-                collapse_point = current
+                st.success(f"✅ Target 16 reached!")
+                st.code(f"Station 16 Value: {current}")
+                st.info(f"Steps from first odd number: {steps}")
                 break
             
-            step_count += 1
+            steps += 1
             if current % 2 == 0:
                 current //= 2
             else:
                 current = 3 * current + 1
-        
-        # اگر عدد از اول مضرب 16 باشد یا در مسیر به آن برسد
-        if current % 16 == 0:
-            collapse_point = current
-
-        st.divider()
-        
-        # نمایش دقیق دو موردی که خواستی
-        if collapse_point:
-            st.success(f"Collapse Value: {collapse_point}")
-            st.info(f"At Step: {step_count}")
-        else:
-            st.write("Reached 1 without hitting a specific 16-multiple.")
-            
-    except ValueError:
-        st.error("Please enter a valid number.")
+                
+    except Exception as e:
+        st.error(f"Error: {e}")
