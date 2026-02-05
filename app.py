@@ -1,49 +1,42 @@
 import streamlit as st
 
-st.set_page_config(page_title="Saeidi's Predictor", page_icon="🎯")
-st.title("Saeidi's Collapse Predictor")
-st.write("Inventor: Samaneh Saeidi")
+st.title("Saeidi's Predictor")
+st.subheader("Inventor: Samaneh Saeidi")
 
-user_input = st.text_input("Enter a large number:", value="13")
+user_input = st.text_input("Enter number:", value="13")
 
-if st.button("Analyze"):
+if st.button("Find Collapse Point"):
     try:
         n = int(user_input)
         original_n = n
-        path = []
+        step_count = 0
+        collapse_point = None
         
-        # مرحله اول: پیدا کردن نقطه فروپاشی (مضرب ۱۶)
-        while n > 1:
-            path.append(n)
-            if n % 16 == 0:
+        # محاسبه برای پیدا کردن اولین مضرب 16
+        current = n
+        while current > 1:
+            if current % 16 == 0:
+                collapse_point = current
                 break
-            if n % 2 == 0:
-                n //= 2
-            else:
-                n = 3 * n + 1
-        
-        # نمایش نتیجه اصلی
-        st.divider()
-        if path[-1] % 16 == 0:
-            st.error(f"🎯 **Collapse Point Reached:** {path[-1]}")
             
-            # --- کادر جدید برای ادامه مسیر (سقوط آزاد) ---
-            st.subheader("📉 Post-Collapse Descent (The 16-Rule):")
-            descent_path = []
-            current = path[-1]
-            # محاسبه ۴ مرحله سقوط حتمی (چون مضرب ۱۶ است، حداقل ۴ بار بر ۲ تقسیم می‌شود)
-            for _ in range(4):
+            step_count += 1
+            if current % 2 == 0:
                 current //= 2
-                descent_path.append(current)
-            
-            st.info(f"Next 4 guaranteed steps: {' ➔ '.join(map(str, descent_path))}")
-            st.write("Since it hit a multiple of 16, it is now diving towards 1.")
-            # ------------------------------------------
-            
-            st.success(f"The number {str(original_n)[:10]}... is in total collapse.")
+            else:
+                current = 3 * current + 1
         
-        with st.expander("Show full calculation steps"):
-            st.write(path)
+        # اگر عدد از اول مضرب 16 باشد یا در مسیر به آن برسد
+        if current % 16 == 0:
+            collapse_point = current
 
+        st.divider()
+        
+        # نمایش دقیق دو موردی که خواستی
+        if collapse_point:
+            st.success(f"Collapse Value: {collapse_point}")
+            st.info(f"At Step: {step_count}")
+        else:
+            st.write("Reached 1 without hitting a specific 16-multiple.")
+            
     except ValueError:
         st.error("Please enter a valid number.")
