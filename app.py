@@ -1,24 +1,28 @@
 import streamlit as st
 
-# تنظیمات اصلی که باعث سنگینی سایت نمی‌شود
-st.set_page_config(page_title="Saeidi's Predictor", page_icon="🎯")
-st.title("Saeidi's Collapse Predictor")
-st.subheader("Inventor: Samaneh Saeidi")
+st.title("Saeidi's Predictor")
+st.write("Inventor: Samaneh Saeidi")
 
-user_input = st.text_input("Enter a large number:", value="13")
+# گرفتن عدد به صورت متن برای جلوگیری از خطای اولیه
+user_input = st.text_input("Enter your large number:", value="13")
 
-if st.button("Analyze"):
+if st.button("Find Collapse Point"):
     try:
+        # تبدیل مستقیم به عدد بزرگ
         n = int(user_input)
-        original_n = n
-        path = []
         step_count = 0
-        
-        # منطق اصلی تئوری سمانه: حرکت تا رسیدن به مضرب ۱۶
         current = n
+        found = False
+        
+        # حلقه محاسباتی فوق سریع و سبک
         while current > 1:
-            path.append(current)
-            if current % 16 == 0: # ایستگاه ۱۶
+            if current % 16 == 0:
+                st.success("🎯 Target Found!")
+                st.write("**Collapse Value:**")
+                # استفاده از st.text برای اینکه عدد غول‌آسا باعث Overflow نشود
+                st.text(str(current))
+                st.info(f"**At Step:** {step_count}")
+                found = True
                 break
             
             step_count += 1
@@ -27,15 +31,8 @@ if st.button("Analyze"):
             else:
                 current = 3 * current + 1
         
-        # نمایش خروجی دقیق و متنی (برای جلوگیری از OverflowError)
-        st.divider()
-        if path[-1] % 16 == 0:
-            st.error(f"🎯 **Collapse Point Reached:** {path[-1]}")
-            st.info(f"**Step Number:** {step_count}")
-            st.success(f"The number {str(original_n)[:10]}... is in total collapse.")
+        if not found:
+            st.write("Reached 1 without hitting a 16-multiple.")
             
-        with st.expander("Show full path steps"):
-            st.write(path)
-
-    except ValueError:
-        st.error("Please enter a valid number.")
+    except Exception as e:
+        st.error("Error: Please enter only digits without spaces.")
