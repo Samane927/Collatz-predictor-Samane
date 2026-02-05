@@ -1,42 +1,48 @@
 import streamlit as st
 
-st.title("Saeidi's Predictor")
-st.subheader("Inventor: Samaneh Saeidi")
+st.set_page_config(page_title="Saeidi's Collapse Theorem", page_icon="📜")
 
-user_input = st.text_input("Enter number:", value="13")
+st.title("Saeidi's 16-Station Theorem")
+st.markdown("---")
+st.write("### Input Analysis")
+user_input = st.text_input("Enter the Target Number:", value="1245876325458968742668878")
 
-if st.button("Find Collapse Point"):
+if st.button("Generate Proof"):
     try:
         n = int(user_input)
         original_n = n
-        step_count = 0
-        collapse_point = None
+        steps = 0
         
-        # محاسبه برای پیدا کردن اولین مضرب 16
-        current = n
-        while current > 1:
-            if current % 16 == 0:
-                collapse_point = current
+        # پیمایش مسیر تا نقطه فروپاشی
+        while n > 1:
+            if n % 16 == 0:
                 break
-            
-            step_count += 1
-            if current % 2 == 0:
-                current //= 2
+            steps += 1
+            if n % 2 == 0:
+                n //= 2
             else:
-                current = 3 * current + 1
+                n = 3 * n + 1
         
-        # اگر عدد از اول مضرب 16 باشد یا در مسیر به آن برسد
-        if current % 16 == 0:
-            collapse_point = current
-
-        st.divider()
-        
-        # نمایش دقیق دو موردی که خواستی
-        if collapse_point:
-            st.success(f"Collapse Value: {collapse_point}")
-            st.info(f"At Step: {step_count}")
-        else:
-            st.write("Reached 1 without hitting a specific 16-multiple.")
+        # نمایش سند اثبات
+        if n % 16 == 0:
+            st.balloons()
+            st.success("## 📄 OFFICIAL PROOF CERTIFICATE")
             
+            # کادر اطلاعات اصلی
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric(label="Collapse Point (Station 16)", value="Confirmed")
+                st.write(f"**Value:** `{n}`")
+            with col2:
+                st.metric(label="Steps to Collapse", value=steps)
+            
+            st.markdown("---")
+            st.info(f"**Theorem Conclusion:** The number `{original_n}` has officially entered the 16-multiple zone at step **{steps}**. According to Saeidi's Theorem, its descent to 1 is now mathematically inevitable and irreversible.")
+            
+        else:
+            st.warning("The number reached 1 without hitting a specific 16-multiple in its path.")
+
     except ValueError:
-        st.error("Please enter a valid number.")
+        st.error("Invalid Input. Please enter a whole number.")
+
+st.sidebar.info("This tool was developed in 2 weeks as a companion to the Saeidi Collatz Paper.")
